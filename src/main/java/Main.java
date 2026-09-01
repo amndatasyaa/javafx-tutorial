@@ -23,7 +23,8 @@ public class Main extends Application {
         mainWindow.setDuke(duke);
 
         stage.setTitle("Duke");
-        stage.setResizable(false);
+        stage.setMinHeight(220.0);
+        stage.setMinWidth(417.0);
         stage.setScene(scene);
         stage.show();
     }
