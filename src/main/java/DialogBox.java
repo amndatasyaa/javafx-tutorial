@@ -1,5 +1,10 @@
+import java.io.IOException;
+import java.util.Collections;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -12,57 +17,63 @@ import javafx.scene.layout.HBox;
  */
 public class DialogBox extends HBox {
 
-    private final Label text;
-    private final ImageView displayPicture;
+    @FXML
+    private Label dialog;
+
+    @FXML
+    private ImageView displayPicture;
 
     /**
      * Creates a dialog box containing the specified text and display picture.
      *
-     * @param message Text shown in the dialog box.
+     * @param text Text shown in the dialog box.
      * @param image Sender's display picture.
      */
-    public DialogBox(String message, Image image) {
-        text = new Label(message);
-        displayPicture = new ImageView(image);
+    private DialogBox(String text, Image image) {
+        FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
+        fxmlLoader.setController(this);
+        fxmlLoader.setRoot(this);
 
-        text.setWrapText(true);
-        displayPicture.setFitWidth(100.0);
-        displayPicture.setFitHeight(100.0);
-        setAlignment(Pos.TOP_RIGHT);
+        try {
+            fxmlLoader.load();
+        } catch (IOException exception) {
+            throw new IllegalStateException("Unable to load DialogBox.fxml", exception);
+        }
 
-        getChildren().addAll(text, displayPicture);
+        dialog.setText(text);
+        displayPicture.setImage(image);
     }
 
     /**
      * Flips the dialog box so that the display picture is on the left.
      */
     private void flip() {
-        setAlignment(Pos.TOP_LEFT);
         ObservableList<Node> children = FXCollections.observableArrayList(getChildren());
-        FXCollections.reverse(children);
+        Collections.reverse(children);
         getChildren().setAll(children);
+        setAlignment(Pos.TOP_LEFT);
     }
 
     /**
      * Creates a dialog box for a message sent by the user.
      *
-     * @param message Text sent by the user.
+     * @param text Text sent by the user.
      * @param image User's display picture.
      * @return Dialog box aligned for the user.
      */
-    public static DialogBox getUserDialog(String message, Image image) {
-        return new DialogBox(message, image);
+    public static DialogBox getUserDialog(String text, Image image) {
+        return new DialogBox(text, image);
     }
 
     /**
      * Creates a dialog box for a response sent by Duke.
      *
-     * @param message Text sent by Duke.
+     * @param text Text sent by Duke.
      * @param image Duke's display picture.
      * @return Dialog box aligned for Duke.
      */
-    public static DialogBox getDukeDialog(String message, Image image) {
-        DialogBox dialogBox = new DialogBox(message, image);
+    public static DialogBox getDukeDialog(String text, Image image) {
+        DialogBox dialogBox = new DialogBox(text, image);
         dialogBox.flip();
         return dialogBox;
     }
